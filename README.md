@@ -22,9 +22,13 @@ Docker for radio station streaming
 # Youtube Playlist
 https://youtube.com/playlist?list=PLTbxS75uLtQgu7PAMtxDt0tTyuyOG8o9z
 
-# Using ffmeg (Streming audio to zeno.fm)
+# Using ffmeg (Streming audio to zeno.fm) ONLY audio NO Mic
 
-    > ffmpeg -f alsa -i hw:0,0 -acodec libmp3lame -ab 32k -vn -c:a mp3 -b:a 64k -ar 44100 -legacy_icecast 1 -f mp3 icecast://source:HsDkgHYb@fluoz.zeno.fm:80/zwqxuffa5v8uv/source
+    > Streaming audio & microphone
+    > ffmpeg -f alsa -i hw:0 -acodec libmp3lame -ab 32k -vn -c:a mp3 -b:a 64k -ar 44100 -legacy_icecast 1 -f mp3 icecast://source:HsDkgHYb@fluoz.zeno.fm:80/zwqxuffa5v8uv/source
+
+    > Streaming ONLY audio no microphone, first detect using : pacmd list-sources
+    > ffmpeg -f pulse -i alsa_output.pci-0000_00_1b.0.analog-stereo.monitor -acodec libmp3lame -ab 128k -vn -ac 2 -c:a mp3 -b:a 192k -ar 44100 -legacy_icecast 1 -f mp3 icecast://source:HsDkgHYb@fluoz.zeno.fm:80/zwqxuffa5v8uv/source
 
 
 # Issue
