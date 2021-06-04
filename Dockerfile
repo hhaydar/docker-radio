@@ -1,26 +1,19 @@
 FROM ubuntu:18.04
 RUN apt-get update
 RUN apt-get -qq -y install curl
-RUN apt-get install -y \
-    libfltk1.3-dev \
-    portaudio19-dev \
-    libopus-dev \
-    libmp3lame-dev \
-    libvorbis-dev \
-    libogg-dev \
-    libflac-dev \
-    libfdk-aac-dev \
-    libdbus-1-dev \
-    libsamplerate0-dev \
-    libssl-dev
+RUN apt-get install -y ffmpeg
 
-ENV DIR=/tmp
-ENV BUTTVERSION=butt-0.1.30
-ENV FILEBUTT=$BUTTVERSION.tar.gz
-RUN curl -L https://sourceforge.net/projects/butt/files/butt/${BUTTVERSION}/${FILEBUTT}/download -o $DIR/$FILEBUTT
-RUN tar -zxf $DIR/$FILEBUTT -C $DIR
 
-WORKDIR $DIR/$BUTTVERSION
-RUN ./configure \ 
-    && make \
-    && make install
+#Stream Encoder Settings / get it from zeno.fm console
+ENV ZENOFM_USER=source
+ENV ZENOFM_PASSWORD=HsDkgHYb
+ENV ZENOFM_SERVER=fluoz.zeno.fm
+ENV ZENOFM_PORT=80
+ENV ZENOFM_MOUNTPOINT=zwqxuffa5v8uv/source
+ENV ZENOFM_URL=icecast://${ZENOFM_USER}:${ZENOFM_PASSWORD}@${ZENOFM_SERVER}:${ZENOFM_PORT}/${ZENOFM_MOUNTPOINT}
+
+#Command for streaming form microphone
+#ENTRYPOINT [ "/usr/bin/ffmpeg" "-f" "alsa" "-i" "hw:0" "-acodec" "libmp3lame" "-ab" "32k" "-vn" "-c:a" "mp3" "-b:a" "64k" "-ar" "44100" "-legacy_icecast" "1" "-f" "mp3"]
+ENTRYPOINT [ "/usr/bin/ffmpeg"]
+#CMD [ "${ZENOFM_URL}"]
+#ffmpeg -f alsa -i hw:0,0 -acodec libmp3lame -ab 32k -vn -c:a mp3 -b:a 64k -ar 44100 -legacy_icecast 1 -f mp3 icecast://source:HsDkgHYb@fluoz.zeno.fm:80/zwqxuffa5v8uv/source
